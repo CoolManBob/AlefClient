@@ -447,15 +447,20 @@ BOOL ApmObject::StreamRead( const CHAR *szFile, BOOL bDecryption , ApModuleDefau
 	ApdObject			*pcsApdObject	;
 
 	// szFile을 읽는다.
-	csStream.Open(szFile, 0, bDecryption);
+	if (!csStream.Open(szFile, 0, bDecryption)) {
+		return TRUE;
+	}
 
 	nNumKeys = csStream.GetNumSections();
 
-	if (nNumKeys > 0)
+	if (nNumKeys == 0)
 	{
 		// debug message, kelovon, 20051005, kelovon
-		printf("Loading Obj: %s, %d\r\n", szFile, nNumKeys);
+		printf("No objects in: %s\r\n", szFile);
+		return TRUE;
 	}
+		
+	printf("Loading %d objects from %s\r\n", nNumKeys, szFile);
 
 	// 각 Section에 대해서...
 	for (i = 0; i < nNumKeys; ++i)
